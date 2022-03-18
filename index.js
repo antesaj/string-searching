@@ -54,8 +54,11 @@ class ACNode {
 
 class ACTrie {
     constructor(wordList) {
-        this.root = new ACNode("");
-        let curr = this.root;
+        this.root = ACTrie.buildTree(new ACNode(""), wordList);
+    }
+
+    static buildTree(root, wordList) {
+        let curr = root;
         wordList.forEach(word => {
             let isWordNode = false;
             for (let i = 0; i < word.length; i++) {
@@ -70,8 +73,15 @@ class ACTrie {
                     curr = curr.getChild(char);
                 }
             }
-            curr = this.root;
-        })
+            curr = root;
+        });
+        return root;
+    }
+
+    mergeTrie(trie) {
+        const newDict = trie.getDictionary(trie.root);
+        ACTrie.buildTree(this.root, newDict);
+        return this;
     }
 
     printTree(root) {
@@ -137,6 +147,16 @@ let ac = new ACTrie([
     'november',
     'december'
 ]);
+let anotherAc = new ACTrie([
+    'andy',
+    'adam',
+    'carl',
+    'kyle',
+    'sean',
+    'travis'
+]);
+
+ac = ac.mergeTrie(anotherAc);
 let dict = ac.getDictionary(ac.root);
 console.log(dict);
 ac.printDictionary();
