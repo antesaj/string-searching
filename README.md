@@ -1,0 +1,3 @@
+# String Searching
+
+## Aho-Corasick
