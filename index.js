@@ -177,16 +177,6 @@ class Automaton {
             let char = inputString[i];
             if (curr.hasChild(char)) {
                 curr = curr.getChild(char);
-                if (curr.isWordNode) {
-                    // Emit word
-                    let tracer = curr;
-                    let word = "";
-                    while (tracer.getParent() != null) {
-                        word = tracer.getData() + word;
-                        tracer = tracer.getParent();
-                    }
-                    console.log(`Found word: ${word}`);
-                }
             } else {
                 while (!curr.hasChild(char) && curr.getParent() !== null) {
                     curr = curr.getFailureLink();
@@ -196,6 +186,16 @@ class Automaton {
                 } else if (curr.hasChild(char)) {
                     curr = curr.getChild(char);
                 }
+            }
+            if (curr.isWordNode) {
+                // Emit word
+                let tracer = curr;
+                let word = "";
+                while (tracer.getParent() != null) {
+                    word = tracer.getData() + word;
+                    tracer = tracer.getParent();
+                }
+                console.log(`Found word: ${word}`);
             }
             
         }
@@ -213,7 +213,7 @@ class Automaton {
 
 // Testing
 let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG']);
-let testString = "GCATCG";
+let testString = "GCATCGACC";
 ac.getMatches(testString);
 
 
