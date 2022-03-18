@@ -1,5 +1,5 @@
 class ACNode {
-    constructor(data = null, parent=null, isWordNode=false) {
+    constructor(data=null, parent=null, isWordNode=false) {
         this.data = data;
         this.parent = parent;
         this.children = [] // List of ACNodes
@@ -9,7 +9,7 @@ class ACNode {
 
     hasChild(data) {
         let result = false;
-        this.children.forEach(child => {
+        this.getChildren().forEach(child => {
             if (child.data === data) {
                 result = true;
             }
@@ -19,7 +19,11 @@ class ACNode {
 
     getChild(data) {
         // TODO: Handle failure to find
-        return this.children.find(child => child.data == data);
+        return this.getChildren().find(child => child.data == data);
+    }
+
+    getChildren() {
+        return this.children;
     }
 
     getParent() {
@@ -30,14 +34,18 @@ class ACNode {
         return this.data;
     }
 
+    getFailureLink() {
+        return this.failureLink;
+    }
+
     addChild(data, isWordNode=false) {
         let child = new ACNode(data, this, isWordNode);
-        this.children.push(child);
+        this.getChildren().push(child);
         return child;
     }
 
     printChildren() {
-        this.children.forEach(child => {
+        this.getChildren().forEach(child => {
             console.log(child.data);
         })
     }
@@ -70,11 +78,11 @@ class ACTrie {
         if (root == null) {
             return;
         }
-        for (let i = 0; i < root.children.length; i++) {
-            console.log(root.children[i].data);
+        for (let i = 0; i < root.getChildren().length; i++) {
+            console.log(root.getChildren()[i].data);
         }
-        for (let i = 0; i < root.children.length; i++) {
-            this.printTree(root.children[i]);
+        for (let i = 0; i < root.getChildren().length; i++) {
+            this.printTree(root.getChildren()[i]);
         }
     }
 
@@ -91,8 +99,8 @@ class ACTrie {
             }
             console.log(word);
         }
-        for (let i = 0; i < root.children.length; i++) {
-            this.printDictionary(root.children[i]);
+        for (let i = 0; i < root.getChildren().length; i++) {
+            this.printDictionary(root.getChildren()[i]);
         }
     }
 }
@@ -122,3 +130,8 @@ let ac = new ACTrie([
 ]);
 
 ac.printDictionary(ac.root);
+
+module.exports = {
+    ACNode,
+    ACTrie
+}
