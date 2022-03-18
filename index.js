@@ -38,8 +38,17 @@ class ACNode {
         return this.failureLink;
     }
 
-    addChild(data, isWordNode=false) {
+    setFailureLink(targetNode) {
+        this.failureLink = targetNode;
+    }
+
+    addChild(data, isWordNode=false, isFirstChar=false) {
+
         let child = new ACNode(data, this, isWordNode);
+        // Every first prefix character failure-links back to root
+        if (isFirstChar) {
+            child.setFailureLink(this);
+        }
         this.getChildren().push(child);
         return child;
     }
@@ -52,22 +61,24 @@ class ACNode {
 
 }
 
+
 class ACTrie {
     constructor(wordList) {
         this.root = ACTrie.buildTree(new ACNode(""), wordList);
+        this.root.setFailureLink(this.root); // Root failure link should be itself
     }
 
     static buildTree(root, wordList) {
         let curr = root;
         wordList.forEach(word => {
             let isWordNode = false;
+            let isFirstChar = false;
             for (let i = 0; i < word.length; i++) {
                 let char = word[i];
-                if (i === word.length - 1) {
-                    isWordNode = true;
-                }
+                isWordNode = (i === word.length - 1);
+                isFirstChar = (i === 0);
                 if (!curr.hasChild(char)) {
-                    let newChild = curr.addChild(char, isWordNode);
+                    let newChild = curr.addChild(char, isWordNode, isFirstChar);
                     curr = newChild;
                 } else {
                     curr = curr.getChild(char);
@@ -76,6 +87,43 @@ class ACTrie {
             curr = root;
         });
         return root;
+    }
+
+    /**
+     * Failure Links
+     * 
+     * All first children of root automatically have theirs set to root
+     * Root failure link is itself
+     * 
+     * BFS trie
+     * if current node doesn't have failure link
+     * get current's parent's failureLink
+     * if parent's failureLink has current's suffix as a child, set target to that child
+     * otherwise, follow parents failureLink's failureLink
+     * repeat until root is reached, if root children doesnt contain suffix, set target to root
+     */
+    static buildFailureLinks(root) {
+        let queue = [root];
+        while (queue.length > 0) {
+            let curr = queue.shift();
+            // Handle setting curr's failure link here
+            if (curr.getFailureLink() == null) {
+                let node = curr.getParent();
+                node = node.getFailureLink();
+                let data = curr.getData();
+                while (!node.hasChild(data) && node.getParent() != null) {
+                    node = node.getFailureLink();
+                }
+                if (node.hasChild(data)) {
+                    curr.setFailureLink(node.getChild(data));
+                } else if (node.getParent() == null) {
+                    curr.setFailureLink(node);
+                }
+            }
+            curr.getChildren().forEach(child => {
+                queue.push(child);
+            });
+        }
     }
 
     mergeTrie(trie) {
@@ -133,33 +181,11 @@ class ACTrie {
 
 
 // Testing
-let ac = new ACTrie([
-    'january', 
-    'february', 
-    'march', 
-    'april', 
-    'may', 
-    'june', 
-    'july', 
-    'august', 
-    'september',
-    'october',
-    'november',
-    'december'
-]);
-let anotherAc = new ACTrie([
-    'andy',
-    'adam',
-    'carl',
-    'kyle',
-    'sean',
-    'travis'
-]);
+let ac = new ACTrie(['ACC', 'ATC', 'CAT', 'GCG']);
+ACTrie.buildFailureLinks(ac.root);
+console.log(ac.root.getChildren()[0].getChildren()[1].getChildren()[0].getFailureLink().getChildren()[0].getData());
+console.log(ac.root.getChildren()[2].getChildren()[0].getFailureLink().getChildren()[0].getChildren()[0].getData());
 
-ac = ac.mergeTrie(anotherAc);
-let dict = ac.getDictionary(ac.root);
-console.log(dict);
-ac.printDictionary();
 
 module.exports = {
     ACNode,
