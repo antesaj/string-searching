@@ -172,6 +172,7 @@ class Automaton {
     }
 
     getMatches(inputString) {
+        // TODO: Cleanup this function
         let curr = this.root;
         for (let i = 0; i < inputString.length; i++) {
             let char = inputString[i];
