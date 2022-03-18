@@ -62,10 +62,11 @@ class ACNode {
 }
 
 
-class ACTrie {
+class Automaton {
     constructor(wordList) {
-        this.root = ACTrie.buildTree(new ACNode(""), wordList);
+        this.root = Automaton.buildTree(new ACNode(""), wordList);
         this.root.setFailureLink(this.root); // Root failure link should be itself
+        Automaton.buildFailureLinks(this.root);
     }
 
     static buildTree(root, wordList) {
@@ -128,7 +129,7 @@ class ACTrie {
 
     mergeTrie(trie) {
         const newDict = trie.getDictionary(trie.root);
-        ACTrie.buildTree(this.root, newDict);
+        Automaton.buildTree(this.root, newDict);
         return this;
     }
 
@@ -181,13 +182,12 @@ class ACTrie {
 
 
 // Testing
-let ac = new ACTrie(['ACC', 'ATC', 'CAT', 'GCG']);
-ACTrie.buildFailureLinks(ac.root);
+let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG']);
 console.log(ac.root.getChildren()[0].getChildren()[1].getChildren()[0].getFailureLink().getChildren()[0].getData());
 console.log(ac.root.getChildren()[2].getChildren()[0].getFailureLink().getChildren()[0].getChildren()[0].getData());
 
 
 module.exports = {
     ACNode,
-    ACTrie
+    Automaton
 }

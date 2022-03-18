@@ -1,4 +1,4 @@
-const { ACNode, ACTrie } = require('./index.js');
+const { ACNode, Automaton } = require('./index.js');
 
 /* ACNode Testing */
 
@@ -37,7 +37,7 @@ test('ACNode parent is set correctly when using addChild', () => {
 });
 
 
-/* ACTrie Testing */
+/* Automaton Testing */
 test('ACTree getDictionary returns full set of words', () => {
     const wordList = [
         'this',
@@ -47,7 +47,7 @@ test('ACTree getDictionary returns full set of words', () => {
         'isnt',
         'it'
     ]
-    const trie = new ACTrie(wordList);
+    const trie = new Automaton(wordList);
     const dictionary = trie.getDictionary(trie.root);
     expect(dictionary.length).toBe(wordList.length);
     wordList.forEach(word => {
@@ -63,7 +63,7 @@ test('Double entries in dictionary are handled by trie', () => {
         'march',
         'april'
     ];
-    const trie = new ACTrie(wordList);
+    const trie = new Automaton(wordList);
     const dictionary = trie.getDictionary(trie.root);
     expect(dictionary.length).toBe(wordList.length - 1);
 });
@@ -72,8 +72,8 @@ test('mergeTrie results in combined dictionary', () => {
     const wordList = ['one', 'two', 'three'];
     const otherList = ['four', 'five'];
     const merged = wordList.concat(otherList);
-    const trie = new ACTrie(wordList);
-    const otherTrie = new ACTrie(otherList);
+    const trie = new Automaton(wordList);
+    const otherTrie = new Automaton(otherList);
     const mergedTrie = trie.mergeTrie(otherTrie);
     const dictionary = mergedTrie.getDictionary(mergedTrie.root);
     merged.forEach(word => {
