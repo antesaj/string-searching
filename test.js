@@ -1,5 +1,6 @@
 const { ACNode, ACTrie } = require('./index.js');
 
+/* ACNode Testing */
 
 test('ACNode defaults parent to null', () => {
     const node = new ACNode();
@@ -34,3 +35,6 @@ test('ACNode parent is set correctly when using addChild', () => {
     const child = parent.addChild('a');
     expect(child.getParent()).toEqual(parent);
 });
+
+
+/* ACTrie Testing */

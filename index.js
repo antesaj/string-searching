@@ -86,7 +86,14 @@ class ACTrie {
         }
     }
 
-    printDictionary(root) {
+    printDictionary() {
+        const dict = this.getDictionary(this.root);
+        dict.forEach(word => {
+            console.log(word);
+        });
+    }
+
+    getDictionary(root, result=[]) {
         if (root == null) {
             return;
         }
@@ -97,12 +104,14 @@ class ACTrie {
                 word = curr.getData() + word;
                 curr = curr.getParent();
             }
-            console.log(word);
+            result.push(word);
         }
         for (let i = 0; i < root.getChildren().length; i++) {
-            this.printDictionary(root.getChildren()[i]);
+            this.getDictionary(root.getChildren()[i], result);
         }
+        return result;
     }
+    
 }
 
 /**
@@ -128,8 +137,9 @@ let ac = new ACTrie([
     'november',
     'december'
 ]);
-
-ac.printDictionary(ac.root);
+let dict = ac.getDictionary(ac.root);
+console.log(dict);
+ac.printDictionary();
 
 module.exports = {
     ACNode,
