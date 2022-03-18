@@ -170,6 +170,36 @@ class Automaton {
         }
         return result;
     }
+
+    getMatches(inputString) {
+        let curr = this.root;
+        for (let i = 0; i < inputString.length; i++) {
+            let char = inputString[i];
+            if (curr.hasChild(char)) {
+                curr = curr.getChild(char);
+                if (curr.isWordNode) {
+                    // Emit word
+                    let tracer = curr;
+                    let word = "";
+                    while (tracer.getParent() != null) {
+                        word = tracer.getData() + word;
+                        tracer = tracer.getParent();
+                    }
+                    console.log(`Found word: ${word}`);
+                }
+            } else {
+                while (!curr.hasChild(char) && curr.getParent() !== null) {
+                    curr = curr.getFailureLink();
+                }
+                if (curr.getParent() == null && curr.hasChild(char)) {
+                    curr = curr.getChild(char);
+                } else if (curr.hasChild(char)) {
+                    curr = curr.getChild(char);
+                }
+            }
+            
+        }
+    }
     
 }
 
@@ -183,8 +213,8 @@ class Automaton {
 
 // Testing
 let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG']);
-console.log(ac.root.getChildren()[0].getChildren()[1].getChildren()[0].getFailureLink().getChildren()[0].getData());
-console.log(ac.root.getChildren()[2].getChildren()[0].getFailureLink().getChildren()[0].getChildren()[0].getData());
+let testString = "GCATCG";
+ac.getMatches(testString);
 
 
 module.exports = {
