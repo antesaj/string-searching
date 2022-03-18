@@ -4,6 +4,7 @@ class ACNode {
         this.parent = parent;
         this.children = [] // List of ACNodes
         this.failureLink = null; // Each ACNode should only have one failure link
+        this.isWordNode = isWordNode;
     }
 
     hasChild(data) {
@@ -19,6 +20,14 @@ class ACNode {
     getChild(data) {
         // TODO: Handle failure to find
         return this.children.find(child => child.data == data);
+    }
+
+    getParent() {
+        return this.parent;
+    }
+
+    getData() {
+        return this.data;
     }
 
     addChild(data, isWordNode=false) {
@@ -68,6 +77,24 @@ class ACTrie {
             this.printTree(root.children[i]);
         }
     }
+
+    printDictionary(root) {
+        if (root == null) {
+            return;
+        }
+        if (root.isWordNode) {
+            let word = "";
+            let curr = root;
+            while (curr.getParent() != null) {
+                word = curr.getData() + word;
+                curr = curr.getParent();
+            }
+            console.log(word);
+        }
+        for (let i = 0; i < root.children.length; i++) {
+            this.printDictionary(root.children[i]);
+        }
+    }
 }
 
 /**
@@ -79,4 +106,19 @@ class ACTrie {
 
 
 // Testing
-let ac = new ACTrie(['']);
+let ac = new ACTrie([
+    'january', 
+    'february', 
+    'march', 
+    'april', 
+    'may', 
+    'june', 
+    'july', 
+    'august', 
+    'september',
+    'october',
+    'november',
+    'december'
+]);
+
+ac.printDictionary(ac.root);
