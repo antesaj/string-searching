@@ -229,7 +229,6 @@ class Automaton {
     }
 
     getMatches(inputString) {
-        // TODO: Cleanup this function
         let curr = this.root;
         let matches = [];
         for (let i = 0; i < inputString.length; i++) {
@@ -239,37 +238,21 @@ class Automaton {
             } else {
                 while (!curr.hasChild(char) && curr.getParent() !== null) {
                     curr = curr.getFailureLink();
-                    if (curr.isWordNode) {
-                        let word = curr.getFullString();
-                        matches.push(word);
-                        console.log(`Found word top via failure link: ${word}`);
-                        let temp = curr;
-                        while (temp.getSuffixLink() !== null) {
-                            temp = temp.getSuffixLink();
-                            if (temp.isWordNode) {
-                                word = temp.getFullString();
-                                matches.push(word);
-                                console.log(`Found word top via suffix: ${word}`);
-                            }
-                        }
-                    }
                 }
                 if (curr.hasChild(char)) {
                     curr = curr.getChild(char);
                 }
             }
             if (curr.isWordNode) {
-                // Emit word
+                // Emit word(s)
                 let word = curr.getFullString();
                 matches.push(word);
-                console.log(`Found word bottom via curr is word: ${word}`);
                 let temp = curr;
                 while (temp.getSuffixLink() !== null) {
                     temp = temp.getSuffixLink();
                     if (temp.isWordNode) {
                         word = temp.getFullString();
                         matches.push(word);
-                        console.log(`Found word bottom via suffix: ${word}`);
                     }
                 }
             }
@@ -281,11 +264,11 @@ class Automaton {
 }
 
 // Testing
-// let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
-// let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
-let ac = new Automaton(['andrew', 'and', 'rew']);
+let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
+let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
+// let ac = new Automaton(['andrew', 'and', 'rew']);
 // let ac = new Automaton(['and', 'rew', 'andrew', 'a', 'an', 'andr', 'drew', 'ndrew']);
-let testString = "andrewantes"
+// let testString = "andrewantes"
 ac.getMatches(testString);
 
 

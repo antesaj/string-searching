@@ -210,10 +210,10 @@ describe("dictionary structure edge case two", () => {
         testString = "andrewantes";
     });
 
-    // test('basic dictionary search yields correct matches', () => {
-    //     const matches = ac.getMatches(testString);
-    //     expect(matches.length).toBe(3);
-    // });
+    test('basic dictionary search yields correct matches', () => {
+        const matches = ac.getMatches(testString);
+        expect(matches.length).toBe(3);
+    });
 
     test('case two has correct structure', () => {
         expect(ac.root.getFailureLink()).toEqual(ac.root);
