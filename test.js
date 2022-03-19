@@ -1,4 +1,4 @@
-const { ACNode, Automaton } = require('./index.js');
+const { ACNode, Automaton } = require('./automaton.js');
 
 /* ACNode Testing */
 

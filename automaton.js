@@ -261,6 +261,22 @@ class Automaton {
         return matches;
     }
 
+    containsUniqueEntry(entry) {
+        let foundWord = true;
+        let curr = this.root;
+        for (let i = 0; i < entry.length; i++) {
+            if (curr.hasChild(entry[i])) {
+                curr = curr.getChild(entry[i]);
+            } else {
+                foundWord = false;
+            }
+        }
+        if (!curr.isWordNode) {
+            foundWord = false;
+        }
+        return foundWord;
+    }
+
 }
 
 // Testing
