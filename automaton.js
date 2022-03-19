@@ -261,6 +261,30 @@ class Automaton {
         return matches;
     }
 
+    getEntriesWithCommonPrefix(prefix) {
+        let curr = this.root;
+        for (let i = 0; i < prefix.length; i++) {
+            if (curr.hasChild(prefix[i])) {
+                curr = curr.getChild(prefix[i]);
+            } else {
+                return [];
+            }
+        }
+
+        let result = [];
+        let queue = [curr];
+        while (queue.length > 0) {
+            curr = queue.shift();
+            if (curr.isWordNode) {
+                result.push(curr.getFullString());
+            }
+            curr.getChildren().forEach(child => {
+                queue.push(child);
+            })
+        }
+        return result;
+    }
+
     containsUniqueEntry(entry) {
         let foundWord = true;
         let curr = this.root;

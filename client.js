@@ -18,12 +18,18 @@ let recursiveReadline = function () {
         if (dict.foundWord(word)) {
             console.log(`\nFound word ${word}\n`);
         } else {
-            console.log(`\n${word} is not in the dictionary\n`)
+            console.log(`\n${word} is not in the dictionary\n`);
         }
+
+        const similarEntries = dict.getSimilarMatches(word);
+        similarEntries.forEach(entry => {
+            console.log(`Similar word: ${entry}`);
+        })
+
         const matchSet = new Set(dict.getAllMatches(word))
         matchSet.forEach(result => {
-            console.log(`Similar Word ${result}`);
-        })
+            console.log(`Substring word: ${result}`);
+        });
         recursiveReadline();
     });
 }

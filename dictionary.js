@@ -7,7 +7,7 @@ class Dictionary {
         this.dict = null;
     }
 
-    async init() {
+    init() {
         var fs = require('fs');
         var wordList = fs.readFileSync(this.wordFile).toString().split("\n");
         this.dict = new Automaton(wordList)
@@ -21,6 +21,11 @@ class Dictionary {
     getAllMatches(word) {
         const matches = this.dict.getMatches(word);
         return matches;
+    }
+
+    getSimilarMatches(word) {
+        const similarMatches = this.dict.getEntriesWithCommonPrefix(word);
+        return similarMatches;
     }
 }
 
