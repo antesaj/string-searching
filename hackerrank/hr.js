@@ -5,7 +5,7 @@ let inputString = '';
 let currentLine = 0;
 
 const fs = require('fs');
-fs.readFile('./test2.txt', 'utf8', (err, data) => {
+fs.readFile('./weirdtest.txt', 'utf8', (err, data) => {
     if (err) {
         console.error(err)
         return
@@ -201,29 +201,8 @@ class Automaton {
             } else {
                 while (!curr.hasChild(char) && curr.getParent() !== null) {
                     curr = curr.getFailureLink();
-                    if (curr.isWordNode) {
-                        let word = curr.getFullString();
-                        if (scoreDict[word]) {
-                            score += scoreDict[word];
-                        }
-                        let temp = curr;
-                        while (temp.getSuffixLink() !== null) {
-                            temp = temp.getSuffixLink();
-                            if (temp.isWordNode) {
-                                word = temp.getFullString();
-                                if (scoreDict[word]) {
-                                    score += scoreDict[word];
-                                }
-                            }
-                        }
-
-                    }
                 }
-                if (curr.getParent() == null && curr.hasChild(char)) {
-                    // is root and root has child
-                    curr = curr.getChild(char);
-                } else if (curr.hasChild(char)) {
-                    // is not root but has child
+                if (curr.hasChild(char)) {
                     curr = curr.getChild(char);
                 }
             }
