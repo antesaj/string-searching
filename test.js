@@ -81,7 +81,7 @@ test('mergeTrie results in combined dictionary', () => {
     });
 });
 
-describe('dictionary search and structure', () => {
+describe('basic dictionary search and structure', () => {
     let ac;
     let testString;
 
@@ -183,5 +183,22 @@ describe('dictionary search and structure', () => {
         expect(root_G_C_G.isWordNode).toBeTruthy();
         expect(root_G_C_G.getFailureLink()).toEqual(ac.root.getChild('G'));
         expect(root_G_C_G.getChildren().length).toBe(0);
+    });
+});
+
+describe("dictionary structure edge case one", () => {
+    let ac;
+    let testString;
+
+    beforeAll(() => {
+        ac = new Automaton(['a', 'aa', 'aaa', 'aaaa', 'aaaaa', 'aaaaab']);
+        testString = "caaaaab";
+    })
+
+    test('basic dictionary search yields correct matches', () => {
+        const matches = ac.getMatches(testString);
+        console.log(matches);
+        expect(matches.length).toBe(16);
+        
     });
 });

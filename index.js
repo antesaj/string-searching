@@ -1,10 +1,11 @@
 class ACNode {
-    constructor(data=null, parent=null, isWordNode=false) {
+    constructor(data = null, parent = null, isWordNode = false) {
         this.data = data;
         this.fullString = null;
         this.parent = parent;
         this.children = [] // List of ACNodes
         this.failureLink = null; // Each ACNode should only have one failure link
+        this.suffixLink = null;
         this.isWordNode = isWordNode;
     }
 
@@ -39,6 +40,14 @@ class ACNode {
         return this.fullString;
     }
 
+    setSuffixLink(node) {
+        this.suffixLink = node;
+    }
+
+    getSuffixLink() {
+        return this.suffixLink;
+    }
+
     getData() {
         return this.data;
     }
@@ -55,7 +64,7 @@ class ACNode {
         this.isWordNode = true;
     }
 
-    addChild(data, isWordNode=false, isFirstChar=false) {
+    addChild(data, isWordNode = false, isFirstChar = false) {
         let fullString = this.fullString + data;
         let child = new ACNode(data, this, isWordNode);
         child.setFullString(fullString);
@@ -80,7 +89,10 @@ class Automaton {
     constructor(wordList) {
         this.root = Automaton.buildTree(new ACNode(""), wordList);
         this.root.setFailureLink(this.root); // Root failure link should be itself
+
+        // Order of these two calls matters, suffix links depend on failure links 
         Automaton.buildFailureLinks(this.root);
+        Automaton.buildSuffixLinks(this.root);
     }
 
     static buildTree(root, wordList) {
@@ -145,6 +157,34 @@ class Automaton {
         }
     }
 
+    /**
+     * Suffix Links
+     * 
+     * From each node, to the next dictionary node that can be reached
+     * via failure links
+     *  
+     */
+    static buildSuffixLinks(root) {
+        let queue = [root];
+        while (queue.length > 0) {
+            let curr = queue.shift();
+            let node = curr;
+            if (curr.getParent() !== null && curr.getParent().getParent() !== null) {
+                // Follow blue arcs until hitting a dictionary node
+                curr = curr.getFailureLink();
+                while (!curr.isWordNode && curr.getParent() !== null) {
+                    curr = curr.getFailureLink();
+                }
+                if (curr.isWordNode) {
+                    node.setSuffixLink(curr);
+                }
+            }
+            node.getChildren().forEach(child => {
+                queue.push(child);
+            })
+        }
+    }
+
     mergeTrie(trie) {
         const newDict = trie.getDictionary(trie.root);
         Automaton.buildTree(this.root, newDict);
@@ -170,7 +210,7 @@ class Automaton {
         });
     }
 
-    getDictionary(root, result=[]) {
+    getDictionary(root, result = []) {
         if (root == null) {
             return;
         }
@@ -204,6 +244,15 @@ class Automaton {
                         let word = curr.getFullString();
                         matches.push(word);
                         console.log(`Found word: ${word}`);
+                        let temp = curr;
+                        while (temp.getSuffixLink() !== null) {
+                            temp = temp.getSuffixLink();
+                            if (temp.isWordNode) {
+                                word = temp.getFullString();
+                                matches.push(word);
+                                console.log(`Found word: ${word}`);
+                            }
+                        }
                     }
                 }
                 if (curr.hasChild(char)) {
@@ -215,12 +264,21 @@ class Automaton {
                 let word = curr.getFullString();
                 matches.push(word);
                 console.log(`Found word: ${word}`);
+                let temp = curr;
+                while (temp.getSuffixLink() !== null) {
+                    temp = temp.getSuffixLink();
+                    if (temp.isWordNode) {
+                        word = temp.getFullString();
+                        matches.push(word);
+                        console.log(`Found word: ${word}`);
+                    }
+                }
             }
-            
+
         }
         return matches;
     }
-    
+
 }
 
 // Testing
