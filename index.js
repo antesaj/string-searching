@@ -42,6 +42,10 @@ class ACNode {
         this.failureLink = targetNode;
     }
 
+    setIsWordNode() {
+        this.isWordNode = true;
+    }
+
     addChild(data, isWordNode=false, isFirstChar=false) {
 
         let child = new ACNode(data, this, isWordNode);
@@ -83,6 +87,9 @@ class Automaton {
                     curr = newChild;
                 } else {
                     curr = curr.getChild(char);
+                    if (isWordNode) {
+                        curr.setIsWordNode();
+                    }
                 }
             }
             curr = root;
@@ -171,6 +178,17 @@ class Automaton {
         return result;
     }
 
+    getWordFromCurrentNode(currentNode) {
+        let tracer = currentNode;
+        let word = "";
+        while (tracer.getParent() != null) {
+            word = tracer.getData() + word;
+            tracer = tracer.getParent();
+        }
+        console.log(`Found word: ${word}`);
+        return word;
+    }
+
     getMatches(inputString) {
         // TODO: Cleanup this function
         let curr = this.root;
@@ -181,22 +199,21 @@ class Automaton {
             } else {
                 while (!curr.hasChild(char) && curr.getParent() !== null) {
                     curr = curr.getFailureLink();
+                    if (curr.isWordNode) {
+                        this.getWordFromCurrentNode(curr);
+                    }
                 }
                 if (curr.getParent() == null && curr.hasChild(char)) {
+                    // is root and root has child
                     curr = curr.getChild(char);
                 } else if (curr.hasChild(char)) {
+                    // is not root but has child
                     curr = curr.getChild(char);
                 }
             }
             if (curr.isWordNode) {
                 // Emit word
-                let tracer = curr;
-                let word = "";
-                while (tracer.getParent() != null) {
-                    word = tracer.getData() + word;
-                    tracer = tracer.getParent();
-                }
-                console.log(`Found word: ${word}`);
+                this.getWordFromCurrentNode(curr);
             }
             
         }
@@ -213,8 +230,16 @@ class Automaton {
 
 
 // Testing
-let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG']);
-let testString = "GCATCGACC";
+// Currently isn't matching words that are suffixes of other words
+//let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
+//let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
+// let ac = new Automaton(['andrew', 'and', 'rew']);
+let ac = new Automaton(['and', 'rew', 'andrew', 'a', 'an', 'andr', 'drew', 'ndrew']);
+console.log(ac.root.getChildren().length)
+ac.root.getChildren().forEach(child => {
+    console.log(child.getData());
+})
+let testString = "andrewantes"
 ac.getMatches(testString);
 
 
