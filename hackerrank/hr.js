@@ -5,7 +5,7 @@ let inputString = '';
 let currentLine = 0;
 
 const fs = require('fs');
-fs.readFile('./bigtest.txt', 'utf8' , (err, data) => {
+fs.readFile('./weirdtest.txt', 'utf8' , (err, data) => {
     if (err) {
       console.error(err)
       return
@@ -25,6 +25,7 @@ function readLine() {
 class ACNode {
     constructor(data=null, parent=null, isWordNode=false) {
         this.data = data;
+        this.fullString = null;
         this.parent = parent;
         this.children = [] // List of ACNodes
         this.failureLink = null; // Each ACNode should only have one failure link
@@ -58,6 +59,14 @@ class ACNode {
         return this.data;
     }
 
+    setFullString(value) {
+        this.fullString = value;
+    }
+
+    getFullString() {
+        return this.fullString;
+    }
+
     getFailureLink() {
         return this.failureLink;
     }
@@ -71,8 +80,9 @@ class ACNode {
     }
 
     addChild(data, isWordNode=false, isFirstChar=false) {
-
+        let fullString = this.fullString + data;
         let child = new ACNode(data, this, isWordNode);
+        child.setFullString(fullString);
         // Every first prefix character failure-links back to root
         if (isFirstChar) {
             child.setFailureLink(this);
@@ -92,6 +102,7 @@ class Automaton {
     }
 
     static buildTree(root, wordList) {
+        root.setFullString("");
         let curr = root;
         wordList.forEach(word => {
             let isWordNode = false;
@@ -150,7 +161,6 @@ class Automaton {
     }
 
     getScore(inputString, scoreDict) {
-        console.log('getting score')
         let score = 0;
         let curr = this.root;
         for (let i = 0; i < inputString.length; i++) {
@@ -161,8 +171,11 @@ class Automaton {
                 while (!curr.hasChild(char) && curr.getParent() !== null) {
                     curr = curr.getFailureLink();
                     if (curr.isWordNode) {
-                        let word = this.getWordFromCurrentNode(curr);
-                        score += scoreDict[word];
+                        let word = curr.getFullString();
+                        if (scoreDict[word]) {
+                            score += scoreDict[word];
+                        }
+                        
                     }
                 }
                 if (curr.getParent() == null && curr.hasChild(char)) {
@@ -175,8 +188,11 @@ class Automaton {
             }
             if (curr.isWordNode) {
                 // Emit word
-                let word = this.getWordFromCurrentNode(curr);
-                score += scoreDict[word];
+                let word = curr.getFullString();
+                if (scoreDict[word]) {
+                    score += scoreDict[word];
+                }
+                
             }
             
         }
@@ -191,21 +207,28 @@ function main() {
     const genes = readLine().replace(/\s+$/g, '').split(' ');
     const health = readLine().replace(/\s+$/g, '').split(' ').map(healthTemp => parseInt(healthTemp, 10));
     const s = parseInt(readLine().trim(), 10);
-    let scoreDict = {};
-    for (let i = 0; i < genes.length; i++) {
-        scoreDict[genes[i]] = scoreDict[genes[i]] ? scoreDict[genes[i]] + health[i] : health[i];
-    }
-    let scores = [];
+    
+    let min = Number.MAX_VALUE
+    let max = 0
+    let ac = new Automaton(genes);
     for (let sItr = 0; sItr < s; sItr++) {
         const firstMultipleInput = readLine().replace(/\s+$/g, '').split(' ');
         const first = parseInt(firstMultipleInput[0], 10);
         const last = parseInt(firstMultipleInput[1], 10);
         const d = firstMultipleInput[2];
-
-        let wordList = genes.slice(first, last+1);
-        let ac = new Automaton(wordList);
+        let scoreDict = {};
+        for (let i = first; i < last+1; i++) {
+            scoreDict[genes[i]] = scoreDict[genes[i]] ? scoreDict[genes[i]] + health[i] : health[i];
+        }
+        //let wordList = genes.slice(first, last+1);
+        
         let score = ac.getScore(d, scoreDict);
-        scores.push(score);
+        if (score >= max) {
+            max = score
+        }
+        if (score <= min) {
+            min = score
+        }
     }
-    console.log(Math.min(...scores), Math.max(...scores));
+    console.log(min, max);
 }

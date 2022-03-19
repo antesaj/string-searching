@@ -1,6 +1,7 @@
 class ACNode {
     constructor(data=null, parent=null, isWordNode=false) {
         this.data = data;
+        this.fullString = null;
         this.parent = parent;
         this.children = [] // List of ACNodes
         this.failureLink = null; // Each ACNode should only have one failure link
@@ -30,6 +31,14 @@ class ACNode {
         return this.parent;
     }
 
+    setFullString(value) {
+        this.fullString = value;
+    }
+
+    getFullString() {
+        return this.fullString;
+    }
+
     getData() {
         return this.data;
     }
@@ -47,8 +56,9 @@ class ACNode {
     }
 
     addChild(data, isWordNode=false, isFirstChar=false) {
-
+        let fullString = this.fullString + data;
         let child = new ACNode(data, this, isWordNode);
+        child.setFullString(fullString);
         // Every first prefix character failure-links back to root
         if (isFirstChar) {
             child.setFailureLink(this);
@@ -74,6 +84,7 @@ class Automaton {
     }
 
     static buildTree(root, wordList) {
+        root.setFullString("");
         let curr = root;
         wordList.forEach(word => {
             let isWordNode = false;
@@ -200,7 +211,8 @@ class Automaton {
                 while (!curr.hasChild(char) && curr.getParent() !== null) {
                     curr = curr.getFailureLink();
                     if (curr.isWordNode) {
-                        this.getWordFromCurrentNode(curr);
+                        let word = curr.getFullString();
+                        console.log(`Found word: ${word}`);
                     }
                 }
                 if (curr.getParent() == null && curr.hasChild(char)) {
@@ -213,7 +225,8 @@ class Automaton {
             }
             if (curr.isWordNode) {
                 // Emit word
-                this.getWordFromCurrentNode(curr);
+                let word = curr.getFullString();
+                console.log(`Found word: ${word}`);
             }
             
         }
@@ -227,9 +240,6 @@ class Automaton {
 // let ac = new Automaton(['andrew', 'and', 'rew']);
 let ac = new Automaton(['and', 'rew', 'andrew', 'a', 'an', 'andr', 'drew', 'ndrew']);
 console.log(ac.root.getChildren().length)
-ac.root.getChildren().forEach(child => {
-    console.log(child.getData());
-})
 let testString = "andrewantes"
 ac.getMatches(testString);
 
