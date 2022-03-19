@@ -279,3 +279,21 @@ describe("dictionary structure edge case two", () => {
         expect(root_andre_w.getSuffixLink()).toEqual(root_re_w);
     });
 });
+
+describe('dictionary structure edge case three', () => {
+    let ac;
+    let testString;
+
+    beforeAll(() => {
+        ac = new Automaton(['ebullient', 'bull', 'b']);
+        testString = "ebull";
+    });
+
+    test('yields correct matches', () => {
+        const matches = ac.getMatches(testString);
+        expect(matches.length).toBe(1);
+        expect(matches).toContain('bull');
+    })
+
+    
+})

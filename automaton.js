@@ -304,12 +304,14 @@ class Automaton {
 }
 
 // Testing
-let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
-let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
+// let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
+// let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
+let ac = new Automaton(['ebullient', 'bull', 'b']);
+let testString = "ebull";
 // let ac = new Automaton(['andrew', 'and', 'rew']);
 // let ac = new Automaton(['and', 'rew', 'andrew', 'a', 'an', 'andr', 'drew', 'ndrew']);
 // let testString = "andrewantes"
-ac.getMatches(testString);
+ac.getMatches(testString).forEach(match => console.log(match));
 
 
 module.exports = {
