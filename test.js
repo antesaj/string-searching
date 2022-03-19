@@ -200,3 +200,82 @@ describe("dictionary structure edge case one", () => {
         expect(matches.length).toBe(16);
     });
 });
+
+describe("dictionary structure edge case two", () => {
+    let ac;
+    let testString;
+
+    beforeAll(() => {
+        ac = new Automaton(['andrew', 'and', 'rew']);
+        testString = "andrewantes";
+    });
+
+    // test('basic dictionary search yields correct matches', () => {
+    //     const matches = ac.getMatches(testString);
+    //     expect(matches.length).toBe(3);
+    // });
+
+    test('case two has correct structure', () => {
+        expect(ac.root.getFailureLink()).toEqual(ac.root);
+        expect(ac.root.getSuffixLink()).toBeNull();
+
+        // BFS Counting
+        let temp = ac.root;
+        let queue = [temp];
+        let totalFailureLinks = 0;
+        let totalSuffixLinks = 0;
+        let totalWordNodes = 0;
+        let nodeCount = 0;
+        while (queue.length > 0) {
+            let curr = queue.shift();
+            nodeCount++;
+            if (curr.isWordNode) {
+                totalWordNodes++;
+            }
+            if (curr.getSuffixLink()) {
+                totalSuffixLinks++;
+            }
+            if (curr.getFailureLink()) {
+                totalFailureLinks++;
+            }
+            curr.getChildren().forEach(child => {
+                queue.push(child);
+            })
+        }
+        expect(nodeCount).toBe(10);
+        expect(totalFailureLinks).toBe(10);
+        expect(totalSuffixLinks).toBe(1);
+        expect(totalWordNodes).toBe(3);
+
+        // Root children
+        expect(ac.root.getChildren().length).toBe(2);
+        ac.root.getChildren().forEach(child => {
+            expect(ac.root.getChild('a')).toBeTruthy();
+            expect(ac.root.getChild('r')).toBeTruthy();
+            ac.root.getChildren().forEach(child => {
+                expect(child.getFailureLink()).toEqual(ac.root);
+                expect(child.getSuffixLink()).toBeNull();
+            });
+        });
+
+        // Root -> a
+        let root_a = ac.root.getChild('a');
+        expect(root_a.getFailureLink()).toEqual(ac.root);
+        expect(root_a.getSuffixLink()).toBeNull();
+        expect(root_a.getChildren().length).toBe(1);
+        expect(root_a.hasChild('n')).toBeTruthy();
+
+        // Root -> a -> n -> d -> r -> e -> w && Root -> r -> e -> w
+        let root_andre_w = ac.root.getChild('a')
+                                  .getChild('n')
+                                  .getChild('d')
+                                  .getChild('r')
+                                  .getChild('e')
+                                  .getChild('w');
+        let root_re_w = ac.root.getChild('r').getChild('e').getChild('w');
+        expect(root_re_w.getFailureLink()).toEqual(ac.root);
+        expect(root_re_w.getSuffixLink()).toBeNull();
+        expect(root_andre_w.getFailureLink()).toEqual(root_re_w);
+        expect(root_andre_w.getSuffixLink()).toEqual(root_re_w);
+    });
+});

@@ -161,8 +161,7 @@ class Automaton {
      * Suffix Links
      * 
      * From each node, to the next dictionary node that can be reached
-     * via failure links
-     *  
+     * via failure links, mark that as the suffix link.
      */
     static buildSuffixLinks(root) {
         let queue = [root];
@@ -243,14 +242,14 @@ class Automaton {
                     if (curr.isWordNode) {
                         let word = curr.getFullString();
                         matches.push(word);
-                        console.log(`Found word: ${word}`);
+                        console.log(`Found word top via failure link: ${word}`);
                         let temp = curr;
                         while (temp.getSuffixLink() !== null) {
                             temp = temp.getSuffixLink();
                             if (temp.isWordNode) {
                                 word = temp.getFullString();
                                 matches.push(word);
-                                console.log(`Found word: ${word}`);
+                                console.log(`Found word top via suffix: ${word}`);
                             }
                         }
                     }
@@ -263,14 +262,14 @@ class Automaton {
                 // Emit word
                 let word = curr.getFullString();
                 matches.push(word);
-                console.log(`Found word: ${word}`);
+                console.log(`Found word bottom via curr is word: ${word}`);
                 let temp = curr;
                 while (temp.getSuffixLink() !== null) {
                     temp = temp.getSuffixLink();
                     if (temp.isWordNode) {
                         word = temp.getFullString();
                         matches.push(word);
-                        console.log(`Found word: ${word}`);
+                        console.log(`Found word bottom via suffix: ${word}`);
                     }
                 }
             }
@@ -282,11 +281,11 @@ class Automaton {
 }
 
 // Testing
-let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
-let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
-// let ac = new Automaton(['andrew', 'and', 'rew']);
+// let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
+// let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
+let ac = new Automaton(['andrew', 'and', 'rew']);
 // let ac = new Automaton(['and', 'rew', 'andrew', 'a', 'an', 'andr', 'drew', 'ndrew']);
-// let testString = "andrewantes"
+let testString = "andrewantes"
 ac.getMatches(testString);
 
 
