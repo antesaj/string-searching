@@ -11,14 +11,14 @@ const readline = require('readline').createInterface({
 
 
 let recursiveReadline = function () {
-    readline.question("What is your word? ", word => {
+    readline.question("\nWhat is your word? ", word => {
         if (word == "q") {
             return readline.close();
         }
         if (dict.foundWord(word)) {
             console.log(`\nFound word ${word}\n`);
         } else {
-            console.log(`${word} is not in the dictionary`)
+            console.log(`\n${word} is not in the dictionary\n`)
         }
         const matchSet = new Set(dict.getAllMatches(word))
         matchSet.forEach(result => {
