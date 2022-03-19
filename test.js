@@ -80,3 +80,108 @@ test('mergeTrie results in combined dictionary', () => {
         expect(dictionary).toContain(word);
     });
 });
+
+describe('dictionary search and structure', () => {
+    let ac;
+    let testString;
+
+    beforeAll(() => {
+        ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG']);
+        testString = "GCATCG";
+    })
+
+    test('basic dictionary search yields correct matches', () => {
+        const matches = ac.getMatches(testString);
+        expect(matches.length).toBe(2);
+        expect(matches).toContain("CAT");
+        expect(matches).toContain("ATC");
+    });
+
+    test('basic dictionary has correct structure', () => {
+        expect(ac.root.getFailureLink()).toEqual(ac.root);
+
+        // Root children
+        expect(ac.root.getChildren().length).toBe(3);
+        ac.root.getChildren().forEach(child => {
+            expect(['A', 'C', 'G']).toContain(child.getData());
+            expect(child.getFailureLink()).toEqual(ac.root);
+        });
+
+        // Root -> A
+        let rootChildA = ac.root.getChild('A');
+        expect(rootChildA.getChildren().length).toBe(2);
+        rootChildA.getChildren().forEach(child => {
+            expect(['C', 'T']).toContain(child.getData());
+        });
+
+        // Root -> C
+        let rootChildC = ac.root.getChild('C');
+        expect(rootChildC.getChildren().length).toBe(1);
+        rootChildC.getChildren().forEach(child => {
+            expect(['A']).toContain(child.getData());
+        });
+
+        // Root -> G
+        let rootChildG = ac.root.getChild('G');
+        expect(rootChildG.getChildren().length).toBe(1);
+        rootChildG.getChildren().forEach(child => {
+            expect(['C']).toContain(child.getData());
+        });
+
+        // Root -> A -> C
+        let root_A_C = ac.root.getChild('A').getChild('C');
+        expect(root_A_C.getFailureLink()).toEqual(ac.root.getChild('C'));
+        expect(root_A_C.getChildren().length).toBe(1);
+        root_A_C.getChildren().forEach(child => {
+            expect(['C']).toContain(child.getData());
+        });
+
+        // Root -> A -> T
+        let root_A_T = ac.root.getChild('A').getChild('T');
+        expect(root_A_T.getFailureLink()).toEqual(ac.root);
+        expect(root_A_T.getChildren().length).toBe(1);
+        root_A_T.getChildren().forEach(child => {
+            expect(['C']).toContain(child.getData());
+        });
+
+        // Root -> C -> A
+        let root_C_A = ac.root.getChild('C').getChild('A');
+        expect(root_C_A.getFailureLink()).toEqual(ac.root.getChild('A'));
+        expect(root_C_A.getChildren().length).toBe(1);
+        root_C_A.getChildren().forEach(child => {
+            expect(['T']).toContain(child.getData());
+        });
+
+        // Root -> G -> C
+        let root_G_C = ac.root.getChild('G').getChild('C');
+        expect(root_G_C.getFailureLink()).toEqual(ac.root.getChild('C'));
+        expect(root_G_C.getChildren().length).toBe(1);
+        root_G_C.getChildren().forEach(child => {
+            expect(['G']).toContain(child.getData());
+        });
+
+        // Root -> A -> C -> C
+        let root_A_C_C = ac.root.getChild('A').getChild('C').getChild('C');
+        expect(root_A_C_C.isWordNode).toBeTruthy();
+        expect(root_A_C_C.getFailureLink()).toEqual(ac.root.getChild('C'));
+        expect(root_A_C_C.getChildren().length).toBe(0);
+
+        // Root -> A -> T -> C
+        let root_A_T_C = ac.root.getChild('A').getChild('T').getChild('C');
+        expect(root_A_T_C.isWordNode).toBeTruthy();
+        expect(root_A_T_C.getFailureLink()).toEqual(ac.root.getChild('C'));
+        expect(root_A_T_C.getChildren().length).toBe(0);
+
+        // Root -> C -> A -> T
+        let root_C_A_T = ac.root.getChild('C').getChild('A').getChild('T');
+        expect(root_C_A_T.isWordNode).toBeTruthy();
+        expect(root_C_A_T.getFailureLink()).toEqual(ac.root.getChild('A').getChild('T'));
+        expect(root_C_A_T.getChildren().length).toBe(0);
+
+        // Root -> G -> C -> G
+        let root_G_C_G = ac.root.getChild('G').getChild('C').getChild('G');
+        expect(root_G_C_G.isWordNode).toBeTruthy();
+        expect(root_G_C_G.getFailureLink()).toEqual(ac.root.getChild('G'));
+        expect(root_G_C_G.getChildren().length).toBe(0);
+    });
+});

@@ -192,6 +192,7 @@ class Automaton {
     getMatches(inputString) {
         // TODO: Cleanup this function
         let curr = this.root;
+        let matches = [];
         for (let i = 0; i < inputString.length; i++) {
             let char = inputString[i];
             if (curr.hasChild(char)) {
@@ -201,6 +202,7 @@ class Automaton {
                     curr = curr.getFailureLink();
                     if (curr.isWordNode) {
                         let word = curr.getFullString();
+                        matches.push(word);
                         console.log(`Found word: ${word}`);
                     }
                 }
@@ -211,10 +213,12 @@ class Automaton {
             if (curr.isWordNode) {
                 // Emit word
                 let word = curr.getFullString();
+                matches.push(word);
                 console.log(`Found word: ${word}`);
             }
             
         }
+        return matches;
     }
     
 }
