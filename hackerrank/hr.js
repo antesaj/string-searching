@@ -5,7 +5,7 @@ let inputString = '';
 let currentLine = 0;
 
 const fs = require('fs');
-fs.readFile('./test.txt', 'utf8' , (err, data) => {
+fs.readFile('./bigtest.txt', 'utf8' , (err, data) => {
     if (err) {
       console.error(err)
       return
@@ -81,12 +81,6 @@ class ACNode {
         return child;
     }
 
-    printChildren() {
-        this.getChildren().forEach(child => {
-            console.log(child.data);
-        })
-    }
-
 }
 
 
@@ -156,6 +150,7 @@ class Automaton {
     }
 
     getScore(inputString, scoreDict) {
+        console.log('getting score')
         let score = 0;
         let curr = this.root;
         for (let i = 0; i < inputString.length; i++) {
