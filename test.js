@@ -38,7 +38,7 @@ test('ACNode parent is set correctly when using addChild', () => {
 
 
 /* Automaton Testing */
-test('ACTree getDictionary returns full set of words', () => {
+test('Automaton getDictionary returns full set of words', () => {
     const wordList = [
         'this',
         'is',
@@ -79,4 +79,4 @@ test('mergeTrie results in combined dictionary', () => {
     merged.forEach(word => {
         expect(dictionary).toContain(word);
     });
-})
+});

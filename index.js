@@ -189,17 +189,6 @@ class Automaton {
         return result;
     }
 
-    getWordFromCurrentNode(currentNode) {
-        let tracer = currentNode;
-        let word = "";
-        while (tracer.getParent() != null) {
-            word = tracer.getData() + word;
-            tracer = tracer.getParent();
-        }
-        console.log(`Found word: ${word}`);
-        return word;
-    }
-
     getMatches(inputString) {
         // TODO: Cleanup this function
         let curr = this.root;
@@ -215,11 +204,7 @@ class Automaton {
                         console.log(`Found word: ${word}`);
                     }
                 }
-                if (curr.getParent() == null && curr.hasChild(char)) {
-                    // is root and root has child
-                    curr = curr.getChild(char);
-                } else if (curr.hasChild(char)) {
-                    // is not root but has child
+                if (curr.hasChild(char)) {
                     curr = curr.getChild(char);
                 }
             }
@@ -235,12 +220,11 @@ class Automaton {
 }
 
 // Testing
-//let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
-//let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
+let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
+let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
 // let ac = new Automaton(['andrew', 'and', 'rew']);
-let ac = new Automaton(['and', 'rew', 'andrew', 'a', 'an', 'andr', 'drew', 'ndrew']);
-console.log(ac.root.getChildren().length)
-let testString = "andrewantes"
+// let ac = new Automaton(['and', 'rew', 'andrew', 'a', 'an', 'andr', 'drew', 'ndrew']);
+// let testString = "andrewantes"
 ac.getMatches(testString);
 
 
