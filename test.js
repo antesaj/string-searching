@@ -197,8 +197,6 @@ describe("dictionary structure edge case one", () => {
 
     test('basic dictionary search yields correct matches', () => {
         const matches = ac.getMatches(testString);
-        console.log(matches);
         expect(matches.length).toBe(16);
-        
     });
 });

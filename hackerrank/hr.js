@@ -5,15 +5,15 @@ let inputString = '';
 let currentLine = 0;
 
 const fs = require('fs');
-fs.readFile('./weirdtest.txt', 'utf8' , (err, data) => {
+fs.readFile('./test2.txt', 'utf8', (err, data) => {
     if (err) {
-      console.error(err)
-      return
+        console.error(err)
+        return
     }
     inputString = data;
     inputString = inputString.split('\n');
     main();
-  })
+})
 
 
 
@@ -23,12 +23,13 @@ function readLine() {
 }
 
 class ACNode {
-    constructor(data=null, parent=null, isWordNode=false) {
+    constructor(data = null, parent = null, isWordNode = false) {
         this.data = data;
         this.fullString = null;
         this.parent = parent;
         this.children = [] // List of ACNodes
         this.failureLink = null; // Each ACNode should only have one failure link
+        this.suffixLink = null;
         this.isWordNode = isWordNode;
     }
 
@@ -67,6 +68,14 @@ class ACNode {
         return this.fullString;
     }
 
+    setSuffixLink(node) {
+        this.suffixLink = node;
+    }
+
+    getSuffixLink() {
+        return this.suffixLink;
+    }
+
     getFailureLink() {
         return this.failureLink;
     }
@@ -79,7 +88,7 @@ class ACNode {
         this.isWordNode = true;
     }
 
-    addChild(data, isWordNode=false, isFirstChar=false) {
+    addChild(data, isWordNode = false, isFirstChar = false) {
         let fullString = this.fullString + data;
         let child = new ACNode(data, this, isWordNode);
         child.setFullString(fullString);
@@ -99,6 +108,7 @@ class Automaton {
         this.root = Automaton.buildTree(new ACNode(""), wordList);
         this.root.setFailureLink(this.root); // Root failure link should be itself
         Automaton.buildFailureLinks(this.root);
+        Automaton.buildSuffixLinks(this.root);
     }
 
     static buildTree(root, wordList) {
@@ -150,6 +160,27 @@ class Automaton {
         }
     }
 
+    static buildSuffixLinks(root) {
+        let queue = [root];
+        while (queue.length > 0) {
+            let curr = queue.shift();
+            let node = curr;
+            if (curr.getParent() !== null && curr.getParent().getParent() !== null) {
+                // Follow blue arcs until hitting a dictionary node
+                curr = curr.getFailureLink();
+                while (!curr.isWordNode && curr.getParent() !== null) {
+                    curr = curr.getFailureLink();
+                }
+                if (curr.isWordNode) {
+                    node.setSuffixLink(curr);
+                }
+            }
+            node.getChildren().forEach(child => {
+                queue.push(child);
+            })
+        }
+    }
+
     getWordFromCurrentNode(currentNode) {
         let tracer = currentNode;
         let word = "";
@@ -175,7 +206,17 @@ class Automaton {
                         if (scoreDict[word]) {
                             score += scoreDict[word];
                         }
-                        
+                        let temp = curr;
+                        while (temp.getSuffixLink() !== null) {
+                            temp = temp.getSuffixLink();
+                            if (temp.isWordNode) {
+                                word = temp.getFullString();
+                                if (scoreDict[word]) {
+                                    score += scoreDict[word];
+                                }
+                            }
+                        }
+
                     }
                 }
                 if (curr.getParent() == null && curr.hasChild(char)) {
@@ -192,13 +233,22 @@ class Automaton {
                 if (scoreDict[word]) {
                     score += scoreDict[word];
                 }
-                
+                let temp = curr;
+                while (temp.getSuffixLink() !== null) {
+                    temp = temp.getSuffixLink();
+                    if (temp.isWordNode) {
+                        word = temp.getFullString();
+                        if (scoreDict[word]) {
+                            score += scoreDict[word];
+                        }
+                    }
+                }
             }
-            
+
         }
         return score;
     }
-    
+
 }
 
 
@@ -207,7 +257,7 @@ function main() {
     const genes = readLine().replace(/\s+$/g, '').split(' ');
     const health = readLine().replace(/\s+$/g, '').split(' ').map(healthTemp => parseInt(healthTemp, 10));
     const s = parseInt(readLine().trim(), 10);
-    
+
     let min = Number.MAX_VALUE
     let max = 0
     let ac = new Automaton(genes);
@@ -217,11 +267,11 @@ function main() {
         const last = parseInt(firstMultipleInput[1], 10);
         const d = firstMultipleInput[2];
         let scoreDict = {};
-        for (let i = first; i < last+1; i++) {
+        for (let i = first; i < last + 1; i++) {
             scoreDict[genes[i]] = scoreDict[genes[i]] ? scoreDict[genes[i]] + health[i] : health[i];
         }
         //let wordList = genes.slice(first, last+1);
-        
+
         let score = ac.getScore(d, scoreDict);
         if (score >= max) {
             max = score
