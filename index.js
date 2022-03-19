@@ -221,16 +221,7 @@ class Automaton {
     
 }
 
-/**
- * If current node children does not have char,
- * Add char to children, advance current to child, move on
- * Else, move on to next letter, advance current
- * to the child
- */
-
-
 // Testing
-// Currently isn't matching words that are suffixes of other words
 //let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
 //let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
 // let ac = new Automaton(['andrew', 'and', 'rew']);
