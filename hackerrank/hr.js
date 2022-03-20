@@ -181,16 +181,6 @@ class Automaton {
         }
     }
 
-    getWordFromCurrentNode(currentNode) {
-        let tracer = currentNode;
-        let word = "";
-        while (tracer.getParent() != null) {
-            word = tracer.getData() + word;
-            tracer = tracer.getParent();
-        }
-        return word;
-    }
-
     getScore(inputString, scoreDict) {
         let score = 0;
         let curr = this.root;

@@ -167,12 +167,6 @@ class Automaton {
         }
     }
 
-    mergeTrie(trie) {
-        const newDict = trie.getDictionary(trie.root);
-        Automaton.buildTree(this.root, newDict);
-        return this;
-    }
-
     printTree(root) {
         if (root == null) {
             return;

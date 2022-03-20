@@ -68,19 +68,6 @@ test('Double entries in dictionary are handled by trie', () => {
     expect(dictionary.length).toBe(wordList.length - 1);
 });
 
-test('mergeTrie results in combined dictionary', () => {
-    const wordList = ['one', 'two', 'three'];
-    const otherList = ['four', 'five'];
-    const merged = wordList.concat(otherList);
-    const trie = new Automaton(wordList);
-    const otherTrie = new Automaton(otherList);
-    const mergedTrie = trie.mergeTrie(otherTrie);
-    const dictionary = mergedTrie.getDictionary(mergedTrie.root);
-    merged.forEach(word => {
-        expect(dictionary).toContain(word);
-    });
-});
-
 describe('basic dictionary search and structure', () => {
     let ac;
     let testString;
