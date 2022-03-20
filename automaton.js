@@ -76,12 +76,6 @@ class ACNode {
         return child;
     }
 
-    printChildren() {
-        this.getChildren().forEach(child => {
-            console.log(child.data);
-        })
-    }
-
 }
 
 
@@ -167,44 +161,11 @@ class Automaton {
         }
     }
 
-    printTree(root) {
-        if (root == null) {
-            return;
-        }
-        for (let i = 0; i < root.getChildren().length; i++) {
-            console.log(root.getChildren()[i].data);
-        }
-        for (let i = 0; i < root.getChildren().length; i++) {
-            this.printTree(root.getChildren()[i]);
-        }
-    }
-
-    printDictionary() {
-        const dict = this.getDictionary(this.root);
-        dict.forEach(word => {
-            console.log(word);
-        });
-    }
-
-    getDictionary(root, result = []) {
-        if (root == null) {
-            return;
-        }
-        if (root.isWordNode) {
-            let word = "";
-            let curr = root;
-            while (curr.getParent() != null) {
-                word = curr.getData() + word;
-                curr = curr.getParent();
-            }
-            result.push(word);
-        }
-        for (let i = 0; i < root.getChildren().length; i++) {
-            this.getDictionary(root.getChildren()[i], result);
-        }
-        return result;
-    }
-
+    /**
+     * 
+     * @param {*} inputString The string to search for dictionary matches 
+     * @returns An array of dictionary matches from the search string
+     */
     getMatches(inputString) {
         let curr = this.root;
         let matches = [];

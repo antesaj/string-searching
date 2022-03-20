@@ -38,36 +38,6 @@ test('ACNode parent is set correctly when using addChild', () => {
 
 
 /* Automaton Testing */
-test('Automaton getDictionary returns full set of words', () => {
-    const wordList = [
-        'this',
-        'is',
-        'a',
-        'test',
-        'isnt',
-        'it'
-    ]
-    const trie = new Automaton(wordList);
-    const dictionary = trie.getDictionary(trie.root);
-    expect(dictionary.length).toBe(wordList.length);
-    wordList.forEach(word => {
-        expect(dictionary).toContain(word);
-    });
-});
-
-test('Double entries in dictionary are handled by trie', () => {
-    const wordList = [
-        'january',
-        'january',
-        'february',
-        'march',
-        'april'
-    ];
-    const trie = new Automaton(wordList);
-    const dictionary = trie.getDictionary(trie.root);
-    expect(dictionary.length).toBe(wordList.length - 1);
-});
-
 describe('basic dictionary search and structure', () => {
     let ac;
     let testString;
