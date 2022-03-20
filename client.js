@@ -35,8 +35,3 @@ let recursiveReadline = function () {
 }
 
 recursiveReadline();
-
-
-// dict.getAllMatches('ann').forEach(match => {
-//     console.log(match)
-// })

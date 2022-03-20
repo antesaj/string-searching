@@ -90,7 +90,9 @@ class Automaton {
         this.root = Automaton.buildTree(new ACNode(""), wordList);
         this.root.setFailureLink(this.root); // Root failure link should be itself
 
-        // Order of these two calls matters, suffix links depend on failure links 
+        // Order of these two calls matters, suffix links depend on failure links
+        // Might be possible to build suffix links during failure links, because
+        // they always point up.
         Automaton.buildFailureLinks(this.root);
         Automaton.buildSuffixLinks(this.root);
     }
@@ -120,19 +122,6 @@ class Automaton {
         return root;
     }
 
-    /**
-     * Failure Links
-     * 
-     * All first children of root automatically have theirs set to root
-     * Root failure link is itself
-     * 
-     * BFS trie
-     * if current node doesn't have failure link
-     * get current's parent's failureLink
-     * if parent's failureLink has current's suffix as a child, set target to that child
-     * otherwise, follow parents failureLink's failureLink
-     * repeat until root is reached, if root children doesnt contain suffix, set target to root
-     */
     static buildFailureLinks(root) {
         let queue = [root];
         while (queue.length > 0) {
@@ -157,12 +146,6 @@ class Automaton {
         }
     }
 
-    /**
-     * Suffix Links
-     * 
-     * From each node, to the next dictionary node that can be reached
-     * via failure links, mark that as the suffix link.
-     */
     static buildSuffixLinks(root) {
         let queue = [root];
         while (queue.length > 0) {
@@ -303,17 +286,6 @@ class Automaton {
     }
 
 }
-
-// Testing
-// let ac = new Automaton(['ACC', 'ATC', 'CAT', 'GCG', 'JDF']);
-// let testString = "GCATCGACCJKFJDLFHSJDHFSDFJDFCATGCGACCJKJFDJJFACCAT";
-let ac = new Automaton(['ebullient', 'bull', 'b']);
-let testString = "ebull";
-// let ac = new Automaton(['andrew', 'and', 'rew']);
-// let ac = new Automaton(['and', 'rew', 'andrew', 'a', 'an', 'andr', 'drew', 'ndrew']);
-// let testString = "andrewantes"
-ac.getMatches(testString).forEach(match => console.log(match));
-
 
 module.exports = {
     ACNode,

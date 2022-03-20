@@ -281,6 +281,9 @@ describe("dictionary structure edge case two", () => {
 });
 
 describe('dictionary structure edge case three', () => {
+    // This is an edge case because it requires the suffix traversal
+    // portion of the algorithm to be correct, and to be in the correct
+    // point in time
     let ac;
     let testString;
 
