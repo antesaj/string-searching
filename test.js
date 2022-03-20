@@ -291,9 +291,8 @@ describe('dictionary structure edge case three', () => {
 
     test('yields correct matches', () => {
         const matches = ac.getMatches(testString);
-        expect(matches.length).toBe(1);
+        expect(matches.length).toBe(2);
+        expect(matches).toContain('b');
         expect(matches).toContain('bull');
     })
-
-    
 })

@@ -247,13 +247,14 @@ class Automaton {
                 // Emit word(s)
                 let word = curr.getFullString();
                 matches.push(word);
-                let temp = curr;
-                while (temp.getSuffixLink() !== null) {
-                    temp = temp.getSuffixLink();
-                    if (temp.isWordNode) {
-                        word = temp.getFullString();
-                        matches.push(word);
-                    }
+            }
+            // Always traverse suffix links
+            let temp = curr;
+            while (temp.getSuffixLink() !== null) {
+                temp = temp.getSuffixLink();
+                if (temp.isWordNode) {
+                    let word = temp.getFullString();
+                    matches.push(word);
                 }
             }
 
