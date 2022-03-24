@@ -105,13 +105,13 @@ class ACNode {
 
 class Automaton {
     constructor(wordList) {
-        this.root = Automaton.buildTree(new ACNode(""), wordList);
+        this.root = Automaton.buildTrie(new ACNode(""), wordList);
         this.root.setFailureLink(this.root); // Root failure link should be itself
         Automaton.buildFailureLinks(this.root);
         Automaton.buildSuffixLinks(this.root);
     }
 
-    static buildTree(root, wordList) {
+    static buildTrie(root, wordList) {
         root.setFullString("");
         let curr = root;
         wordList.forEach(word => {

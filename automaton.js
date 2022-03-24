@@ -78,10 +78,14 @@ class ACNode {
 
 }
 
-
+/**
+ * This class is used to build an Aho-Corasick automaton data structure
+ * that can be used for implementing the Aho-Corasick matching algorithm
+ * as well as other related uses.
+ */
 class Automaton {
     constructor(wordList) {
-        this.root = Automaton.buildTree(new ACNode(""), wordList);
+        this.root = Automaton.buildTrie(new ACNode(""), wordList);
         this.root.setFailureLink(this.root); // Root failure link should be itself
 
         // Order of these two calls matters, suffix links depend on failure links
@@ -91,7 +95,21 @@ class Automaton {
         Automaton.buildSuffixLinks(this.root);
     }
 
-    static buildTree(root, wordList) {
+    /**
+     * Builds the trie using the list of words.
+     * 
+     * Words with a common prefix will be on the same path until
+     * their suffixes diverge.
+     * 
+     * Each node is marked with information about whether it represents
+     * a word in the dictionary, as well as the entire prefix to that
+     * point in the trie.
+     * 
+     * @param {*} root root ACNode from which to start building the trie
+     * @param {*} wordList the list of words used to build the trie
+     * @returns root node of the built trie 
+     */
+    static buildTrie(root, wordList) {
         root.setFullString("");
         let curr = root;
         wordList.forEach(word => {
@@ -116,6 +134,15 @@ class Automaton {
         return root;
     }
 
+    /**
+     * This takes a constructed trie and builds links between nodes
+     * that are used when Aho-Corasick encounters a character not
+     * in its current path in the trie.
+     * 
+     * The links help the algorithm transition states efficiently.
+     * 
+     * @param {*} root ACNode to start building from
+     */
     static buildFailureLinks(root) {
         let queue = [root];
         while (queue.length > 0) {
@@ -140,6 +167,17 @@ class Automaton {
         }
     }
 
+    /**
+     * Takes a constructed trie with failure links already built and
+     * adds the necessary suffix links needed by the Aho-Corasick matching
+     * algorithm.
+     * 
+     * Suffix links are used to find matches that are contained within other
+     * matches. An example is 'ebullient'. When this word is found,
+     * suffix links will lead the algorithm to also find 'bull'.
+     * 
+     * @param {*} root ACNode to start building from
+     */
     static buildSuffixLinks(root) {
         let queue = [root];
         while (queue.length > 0) {
@@ -203,6 +241,18 @@ class Automaton {
         return matches;
     }
 
+    /**
+     * This is an auxiliary method to find all words in the dictionary
+     * with a common prefix to the provided input.
+     * 
+     * Example: an input "plan" will result in "planned", "planning", etc.
+     * 
+     * The algorithm first traverses the trie path of the prefix, then
+     * does a BFS on the remaining sub-trie to find all suffixes of that prefix.
+     * 
+     * @param {*} prefix the input to check
+     * @returns list of words with the provided prefix
+     */
     getEntriesWithCommonPrefix(prefix) {
         let curr = this.root;
         for (let i = 0; i < prefix.length; i++) {
@@ -227,6 +277,16 @@ class Automaton {
         return result;
     }
 
+    /**
+     * This auxiliary method will tell whether a specific word
+     * is in the dictionary.
+     * 
+     * It is very fast because instead of traversing the entire word
+     * list, a single trie path is traversed.
+     * 
+     * @param {*} entry the word to check the dictionary for
+     * @returns boolean indicating whether word exists or not
+     */
     containsUniqueEntry(entry) {
         let foundWord = true;
         let curr = this.root;
