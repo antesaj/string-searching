@@ -3,8 +3,8 @@ class ACNode {
         this.data = data;
         this.fullString = null;
         this.parent = parent;
-        this.children = [] // List of ACNodes
-        this.failureLink = null; // Each ACNode should only have one failure link
+        this.children = []
+        this.failureLink = null;
         this.suffixLink = null;
         this.isWordNode = isWordNode;
     }
@@ -121,11 +121,11 @@ class Automaton {
         while (queue.length > 0) {
             let curr = queue.shift();
             // Handle setting curr's failure link here
-            if (curr.getFailureLink() == null) {
+            if (curr.getFailureLink() === null) {
                 let node = curr.getParent();
                 node = node.getFailureLink();
                 let data = curr.getData();
-                while (!node.hasChild(data) && node.getParent() != null) {
+                while (!node.hasChild(data) && node.getParent() !== null) {
                     node = node.getFailureLink();
                 }
                 if (node.hasChild(data)) {
@@ -162,6 +162,9 @@ class Automaton {
     }
 
     /**
+     * Primary Aho-Corasick search algorithm.
+     * 
+     * This will check for all dictionary matches within the input string.
      * 
      * @param {*} inputString The string to search for dictionary matches 
      * @returns An array of dictionary matches from the search string

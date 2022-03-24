@@ -1,15 +1,16 @@
+const wordListPath = require('word-list');
 const { Automaton } = require('./automaton.js');
-const fs = require('fs');
+
 
 class Dictionary {
-    constructor(wordFile = "./words.txt") {
-        this.wordFile = wordFile;
+    constructor(wordFile = wordListPath) {
         this.dict = null;
+        this.wordFile = wordFile;
     }
 
     init() {
-        var fs = require('fs');
-        var wordList = fs.readFileSync(this.wordFile).toString().split("\n");
+        const fs = require('fs');
+        var wordList = fs.readFileSync(this.wordFile, 'utf8').split("\n");
         this.dict = new Automaton(wordList)
     }
 
