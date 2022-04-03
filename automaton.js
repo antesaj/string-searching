@@ -1,4 +1,16 @@
+/**
+* A trie node used for building automatons. Each node
+* conveys information about its preceding nodes,
+* and whether or not itself represents a full word.
+*/
 class ACNode {
+  /**
+     * Builds a node for the automaton trie
+     *
+     * @param {*} data Should be a single character from a dictionary word
+     * @param {ACNode} parent The current node's parent node
+     * @param {Boolean} isWordNode whether this represents a full dict word
+     */
   constructor(data = null, parent = null, isWordNode = false) {
     this.data = data;
     this.fullString = null;
@@ -9,6 +21,12 @@ class ACNode {
     this.isWordNode = isWordNode;
   }
 
+  /**
+   * Returns whether or not the provided node is a child of this node 
+   *
+   * @param {Character} data the data of the child being searched for 
+   * @return {Boolean} whether child exists
+   */
   hasChild(data) {
     let result = false;
     this.getChildren().forEach((child) => {
@@ -19,51 +37,117 @@ class ACNode {
     return result;
   }
 
+  /**
+   * Retrieves the ACNode child of this ACNode with provided data
+   *
+   * @param {Character} data which child to get based on character
+   * @return {ACNode} the child containing the provided character
+   */
   getChild(data) {
     // TODO: Handle failure to find
     return this.getChildren().find((child) => child.data === data);
   }
 
+  /**
+   * Retrieves all of this node's children
+   *
+   * @return {Array<ACNode>} all of this node's children nodes
+   */
   getChildren() {
     return this.children;
   }
 
+  /**
+   * Retrieves this node's parent node
+   *
+   * @return {ACNode}
+   */
   getParent() {
     return this.parent;
   }
 
+  /**
+   * Sets this node's full string value to the provided value
+   *
+   * @param {String} value what to set this node's full string to
+   */
   setFullString(value) {
     this.fullString = value;
   }
 
+  /**
+   * Retrieves this node's full string representation, which
+   * is based on the values of its parents up to the root
+   *
+   * @return {String} this node's full string
+   */
   getFullString() {
     return this.fullString;
   }
 
+  /**
+   * Sets this node's suffix link to the provided node
+   *
+   * @param {ACNode | null} node target node for the link, if exists
+   */
   setSuffixLink(node) {
     this.suffixLink = node;
   }
 
+  /**
+   * Retrieves this node's suffix link node, which is not
+   * guaranteed to exist
+   *
+   * @return {ACNode | null} this node's suffix link, if exists
+   */
   getSuffixLink() {
     return this.suffixLink;
   }
 
+  /**
+   * Retrieves this node's stored character
+   *
+   * @return {Character} this node's character
+   */
   getData() {
     return this.data;
   }
 
+  /**
+   * Retrieves this node's failure link node, if exists
+   *
+   * @return {ACNode | null}
+   */
   getFailureLink() {
     return this.failureLink;
   }
 
+  /**
+   * Sets this node's failure link, if any
+   *
+   * @param {ACNode | null} targetNode the node to set this node's failure to
+   */
   setFailureLink(targetNode) {
     this.failureLink = targetNode;
   }
 
+  /**
+   * Sets this node as a word node, meaning it and it's ancestors represent
+   * a full word in the dictionary
+   */
   setIsWordNode() {
     this.isWordNode = true;
   }
 
+  /**
+   * Adds a node to this node's set of children. Children will
+   * maintain awareness of their parent.
+   *
+   * @param {*} data
+   * @param {*} isWordNode
+   * @param {*} isFirstChar
+   * @return {ACNode} the created child node
+   */
   addChild(data, isWordNode = false, isFirstChar = false) {
     const fullString = this.fullString + data;
     const child = new ACNode(data, this, isWordNode);
