@@ -22,9 +22,9 @@ class ACNode {
   }
 
   /**
-   * Returns whether or not the provided node is a child of this node 
+   * Returns whether or not the provided node is a child of this node
    *
-   * @param {Character} data the data of the child being searched for 
+   * @param {Character} data the data of the child being searched for
    * @return {Boolean} whether child exists
    */
   hasChild(data) {
